@@ -1,0 +1,39 @@
+{
+  "name": "template-variable-hint",
+  "displayName": "Template Variable Hint",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:plaintext",
+    "onLanguage:markdown"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "plaintext",
+        "extensions": [
+          ".tmpl",
+          ".txt"
+        ],
+        "aliases": [
+          "Template"
+        ]
+      },
+      {
+        "id": "markdown",
+        "extensions": [
+          ".md"
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "vscode": "^1.1.37"
+  }
+}
