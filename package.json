@@ -1,7 +1,13 @@
 {
-  "name": "template-variable-hint",
-  "displayName": "Template Variable Hint",
+  "name": "variable-hint",
+  "displayName": "Variable Hint",
+  "publisher": "Suhaha",
   "version": "0.0.1",
+  "description": "A VSCode extension that provides a hint for variable names in templates",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shhdgit/vscode-variable-hint"
+  },
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -31,7 +37,8 @@
     ]
   },
   "scripts": {
-    "package": "vsce package"
+    "package": "vsce package",
+    "publish": "vsce publish"
   },
   "devDependencies": {
     "vscode": "^1.1.37"
