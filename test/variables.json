@@ -2,5 +2,7 @@
   "tidb-release-version": "v7.0.0",
   "test": {
     "foo": "bar"
-  }
+  },
+  "test2": "ab",
+  "test3": "dd"
 }

@@ -1,0 +1,14 @@
+{
+  "scopeName": "custom.template.variables",
+  "patterns": [
+    {
+      "name": "variable.other.template.mustache",
+      "match": "\\{\\{\\s*\\.(.*?)\\s*\\}\\}"
+    }
+  ],
+  "repository": {},
+  "injections": {},
+  "fileTypes": [],
+  "name": "Template Variables",
+  "uuid": "template-vars-highlight"
+}

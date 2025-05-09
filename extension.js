@@ -32,19 +32,16 @@ function getSubKeysByPath(obj, path) {
   return Object.keys(current);
 }
 
-function watchVariableFile(workspacePath) {
-  const filePattern = new vscode.RelativePattern(
-    workspacePath,
-    "variables.json"
-  );
-  watcher = vscode.workspace.createFileSystemWatcher(filePattern);
+function getValueByPath(obj, path) {
+  const keys = path.split(".");
+  let current = obj;
 
-  watcher.onDidChange(() => loadVariables(workspacePath));
-  watcher.onDidCreate(() => loadVariables(workspacePath));
-  watcher.onDidDelete(() => {
-    variableTree = {};
-    console.log("variables.json deleted — cache cleared.");
-  });
+  for (let key of keys) {
+    if (!current || typeof current !== "object") return undefined;
+    current = current[key];
+  }
+
+  return current;
 }
 
 function activate(context) {
@@ -53,7 +50,13 @@ function activate(context) {
   const workspacePath = workspaceFolders[0].uri.fsPath;
 
   loadVariables(workspacePath);
-  watchVariableFile(workspaceFolders[0]);
+
+  const saveListener = vscode.workspace.onDidSaveTextDocument((doc) => {
+    const fileName = path.basename(doc.fileName);
+    if (fileName === "variables.json") {
+      loadVariables(workspacePath);
+    }
+  });
 
   const provider = vscode.languages.registerCompletionItemProvider(
     ["plaintext", "markdown"],
@@ -85,9 +88,13 @@ function activate(context) {
               vscode.CompletionItemKind.Variable
             );
             item.insertText = insertText;
-            item.detail = `Path: .${[...pathPrefix.split("."), key]
+
+            const fullPath = [...pathPrefix.split("."), key]
               .filter(Boolean)
-              .join(".")}`;
+              .join(".");
+            const value = getValueByPath(variableTree, fullPath);
+            item.detail = `Value: ${JSON.stringify(value)}`;
+
             return item;
           });
       },
@@ -95,7 +102,36 @@ function activate(context) {
     "."
   );
 
-  context.subscriptions.push(provider, watcher);
+  const hoverProvider = vscode.languages.registerHoverProvider(
+    ["plaintext", "markdown"],
+    {
+      provideHover(document, position) {
+        const range = document.getWordRangeAtPosition(
+          position,
+          /\{\{\s*\.(.*?)\s*\}\}/
+        );
+        if (!range) return;
+
+        const word = document.getText(range); // e.g. {{ .user.name }}
+        const match = word.match(/\{\{\s*\.(.*?)\s*\}\}/);
+        if (!match) return;
+
+        const variablePath = match[1]; // e.g. user.name
+        const value = getValueByPath(variableTree, variablePath);
+
+        if (value === undefined) return;
+
+        const markdown = new vscode.MarkdownString();
+        markdown.appendCodeblock(
+          `Path: ${variablePath}\nValue: ${JSON.stringify(value, null, 2)}`,
+          "json"
+        );
+        return new vscode.Hover(markdown, range);
+      },
+    }
+  );
+
+  context.subscriptions.push(provider, watcher, saveListener, hoverProvider);
 }
 
 function deactivate() {}
