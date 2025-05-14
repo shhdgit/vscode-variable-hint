@@ -65,7 +65,7 @@ function activate(context) {
         const line = document.lineAt(position).text;
         const prefix = line.substring(0, position.character);
 
-        const match = prefix.match(/\{\{\s*\.(.*?)$/);
+        const match = prefix.match(/\{\{\{\s*\.(.*?)$/);
         if (!match) return undefined;
 
         const partialPath = match[1].trim(); // e.g. "user.na" or "user."
@@ -108,12 +108,12 @@ function activate(context) {
       provideHover(document, position) {
         const range = document.getWordRangeAtPosition(
           position,
-          /\{\{\s*\.(.*?)\s*\}\}/
+          /\{\{\{\s*\.(.*?)\s*\}\}\}/
         );
         if (!range) return;
 
         const word = document.getText(range); // e.g. {{ .user.name }}
-        const match = word.match(/\{\{\s*\.(.*?)\s*\}\}/);
+        const match = word.match(/\{\{\{\s*\.(.*?)\s*\}\}\}/);
         if (!match) return;
 
         const variablePath = match[1]; // e.g. user.name
