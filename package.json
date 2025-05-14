@@ -2,7 +2,7 @@
   "name": "variable-hint",
   "displayName": "variable-hint",
   "publisher": "Suhaha",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A VSCode extension that provides a hint for variable names in templates",
   "repository": {
     "type": "git",
